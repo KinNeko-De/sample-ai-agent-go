@@ -85,6 +85,18 @@ Input/Output Sanitization belongs here — it is a safety concern, not a memory 
 
 - Step/trace logging (log each thought, action, observation as it happens)
 - Reasoning chain visualization (display the full ReAct trace for debugging)
+- Metrics (counters and measurements exported in a standard format, e.g. Prometheus)
+    - Request count (total LLM calls made)
+    - Token usage per call (prompt tokens, completion tokens, total)
+    - Tool call count per tool (how often each tool was invoked)
+    - Retry count (how many blind or correction retries occurred)
+    - Error count by type (parse failures, LLM errors, tool errors)
+    - Response latency (time from user input to final answer)
+- Tracing (structured spans capturing the lifecycle of a single agent turn, e.g. OpenTelemetry)
+    - One root span per user turn
+    - Child spans for each LLM call, tool execution, and JSON parse/repair step
+    - Span attributes: model name, token counts, tool name, retry attempt number
+    - Exportable to a trace backend (e.g. Jaeger, Tempo) for visual inspection of the full reasoning chain
 
 ### 7. Advanced Planning
 
