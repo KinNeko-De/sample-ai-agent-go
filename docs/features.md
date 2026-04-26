@@ -102,3 +102,11 @@ Input/Output Sanitization belongs here — it is a safety concern, not a memory 
 
 - Architectural Decision Records (ADRs — document why key technical choices were made)
 - arc42 template (structured architecture documentation)
+
+### 11. End-User Interface
+
+The CLI/REPL is a developer tool. A real end-user interface will be added at a late stage once the agent behavior is stable.
+
+- Web UI or chat-style interface for non-technical users (managers, back-office staff)
+- Internal trace output (`thought`, `action`, `observation`) is shown in a separate, optional panel — hidden by default, user can opt in to open it
+- Error messages are human-friendly, not technical stack traces
