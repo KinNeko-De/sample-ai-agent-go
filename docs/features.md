@@ -76,6 +76,8 @@ Input/Output Sanitization belongs here — it is a safety concern, not a memory 
 - Input Sanitization (clean/validate user input before sending to LLM)
 - Output Sanitization (clean/validate LLM output before displaying or acting on it)
 - JSON Formatting failures (handle cases where model returns malformed JSON for tool calls)
+    - **Step 1 — Blind retry**: call the LLM again with the identical prompt and history, up to a fixed number of attempts (e.g. 3), before giving up; simple to implement, no extra prompt engineering required
+    - **Step 2 — Correction retry**: on a parse failure, append a follow-up message telling the LLM exactly what went wrong and what to produce instead (e.g. *"Your last response was not valid JSON. Respond only with valid JSON matching this schema: ..."*); more effective than blind retry because the model is given explicit guidance on how to fix the output
 - Domain Gating (refuse requests outside the intended domain)
 - Fact Alignment (check model claims against known ground truth / tool results)
 
