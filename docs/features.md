@@ -37,6 +37,17 @@ Sits on top of a working agent loop.
 - Action (model decides which tool to call)
 - Observation (tool result fed back to model)
 - Final Answer (model produces end response when done reasoning)
+- Structured step schema (the LLM fills a JSON object per ReAct cycle for internal analysis; only `final_answer` is extracted and displayed to the user as plain text)
+    - The schema is also provided to the LLM in the system prompt so it knows exactly what to fill and how
+    - Fields:
+        - `thought` — the model's internal reasoning for this step; what it knows, what it still needs, and why it is taking the next action (free text, required every step)
+        - `action` — what the model decided to do next; either `"tool_call"` (needs more information) or `"final_answer"` (ready to respond to the user)
+        - `tool` — name of the tool to call; only set when `action` is `"tool_call"`, otherwise `null`
+        - `tool_input` — a JSON object containing the arguments for the tool; only set when `action` is `"tool_call"`, otherwise `null`; shape must match the tool's registered schema
+        - `observation` — left `null` by the LLM; filled in by the agent after executing the tool, then sent back to the LLM in the next cycle
+        - `final_answer` — the response shown to the user; only set when `action` is `"final_answer"`, otherwise `null`; plain natural language, no JSON
+    - Enables reliable step logging and reasoning chain visualization (see feature 6)
+    - Requires robust JSON extraction and repair before unmarshaling (see "JSON Formatting failures" in feature 5)
 
 ### 4. State & Memory & History Management
 
