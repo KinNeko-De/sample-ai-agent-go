@@ -42,9 +42,10 @@ Sits on top of a working agent loop.
 
 - Short-term conversation history (pass prior turns to each LLM call)
 - Context Management
-    - Sliding Window (keep only the last N messages to stay within token limits)
-    - Summarization (compress older history into a summary)
-    - History Lookup (retrieve relevant past turns by query)
+    - Reducing History Length
+        - Sliding Window (keep only the last N messages to stay within token limits)
+        - Summarization (compress older history into a summary)
+        - History Lookup (retrieve relevant past turns by query)
     - Validating Output with Tool Result (cross-check model answer against tool data)
 
 ### 5. Guardrails & Sanitization
