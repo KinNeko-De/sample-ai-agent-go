@@ -1,3 +1,6 @@
+- IDE
+    - User Input goes to LLM
+    - Predefined User Prompts for testing
 - Tool Calling
     - Mock Data
     - Vector DB Lookup
