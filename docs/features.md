@@ -84,6 +84,10 @@ Input/Output Sanitization belongs here — it is a safety concern, not a memory 
     - **Step 2 — Correction retry**: on a parse failure, append a follow-up message telling the LLM exactly what went wrong and what to produce instead (e.g. *"Your last response was not valid JSON. Respond only with valid JSON matching this schema: ..."*); more effective than blind retry because the model is given explicit guidance on how to fix the output
 - Domain Gating (refuse requests outside the intended domain)
 - Fact Alignment (check model claims against known ground truth / tool results)
+- LLM-as-Judge — Runtime (a second LLM call evaluates the agent's response before it is shown to the user)
+    - Judges against defined criteria: correctness, tone, safety, domain relevance, schema compliance
+    - If the response fails the judgment it can be blocked, retried, or flagged
+    - Trade-off: doubles LLM calls and adds latency on every turn
 
 ### 6. Observability
 
@@ -115,6 +119,10 @@ Input/Output Sanitization belongs here — it is a safety concern, not a memory 
 ### 9. Evaluation
 
 - Test harness with expected outputs (run predefined prompts, assert expected results — verifies changes don't break behavior)
+- LLM-as-Judge — Offline (a second LLM evaluates agent responses as a batch step, not in the live request path)
+    - Given a prompt, the agent's response, and optionally an expected answer, the judge scores or flags the response
+    - Useful for regression testing after changes — similar to how GitHub Copilot reviews AI-generated PRs
+    - No latency cost since it runs outside the live agent loop
 
 ### 10. Documentation
 
