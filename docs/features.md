@@ -74,6 +74,10 @@ Sits on top of a working agent loop.
 Input/Output Sanitization belongs here — it is a safety concern, not a memory concern.
 
 - Input Sanitization (clean/validate user input before sending to LLM)
+- Prompt Injection Defense (prevent user input from overriding the system prompt or hijacking agent behavior)
+    - **Step 1 — Structural separation**: user input is always passed as a `role: "user"` message, never interpolated directly into the system prompt string; this is the baseline and must be in place from sprint 00
+    - **Step 2 — Input heuristic detection**: scan user input for known injection patterns before sending to the LLM (e.g. phrases like "ignore previous instructions", "you are now", "disregard your system prompt"); reject or sanitize on match
+    - **Step 3 — Output validation**: after each LLM response, check that the output still conforms to the expected schema and domain; a response that suddenly ignores the JSON schema or changes persona is a signal that injection may have succeeded
 - Output Sanitization (clean/validate LLM output before displaying or acting on it)
 - JSON Formatting failures (handle cases where model returns malformed JSON for tool calls)
     - **Step 1 — Blind retry**: call the LLM again with the identical prompt and history, up to a fixed number of attempts (e.g. 3), before giving up; simple to implement, no extra prompt engineering required
