@@ -57,6 +57,10 @@ Sits on top of a working agent loop.
 ### 4. State & Memory & History Management
 
 - Short-term conversation history (pass prior turns to each LLM call)
+    - **Phase 1 — Simple message history** (introduced alongside the REPL in feature 1): each turn is stored as a message with a `role` (`user` or `assistant`) and a `content` string (the raw user input and the LLM's plain-text answer)
+    - **Phase 2 — Structured message history** (introduced alongside the ReAct step schema in feature 3):
+        - the assistant message's `content` stores the full JSON step object so the conversation history reflects the structured reasoning, not just the final answer
+        - after a tool is executed, its result is appended as a separate message with `role: "tool"` and `content` containing the tool result; this follows the OpenAI-compatible API convention and keeps tool output semantically distinct from user and assistant messages
 - Context Management
     - Reducing History Length
         - Sliding Window (keep only the last N messages to stay within token limits)
