@@ -14,6 +14,7 @@
 ### 1. Foundation
 
 - Ollama client setup (OpenAI-compatible base URL, model config, API key placeholder)
+- System prompt (a `role: "system"` message prepended to the history on every call that sets the agent's identity, behavior rules, and output format expectations; updated as new capabilities are added)
 - Basic completion: send prompt → receive response
 - Streaming response display (show tokens as they arrive)
 - CLI/REPL Interface
