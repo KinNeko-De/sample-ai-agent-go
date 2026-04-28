@@ -100,12 +100,11 @@ Input/Output Sanitization belongs here — it is a safety concern, not a memory 
     - Retry count (how many blind or correction retries occurred)
     - Error count by type (parse failures, LLM errors, tool errors)
     - Response latency (time from user input to final answer)
-- Tracing (structured spans capturing the lifecycle of a single agent turn, e.g. OpenTelemetry)
+    - Tracing (structured spans capturing the lifecycle of a single agent turn, e.g. OpenTelemetry)
     - One root span per user turn
     - Child spans for each LLM call, tool execution, and JSON parse/repair step
     - Span attributes: model name, token counts, tool name, retry attempt number
-    - Exportable to a trace backend (e.g. Jaeger, Tempo) for visual inspection of the full reasoning chain
-
+    
 ### 7. Advanced Planning
 
 - Decomposition (break complex goals into sub-tasks)

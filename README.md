@@ -27,21 +27,20 @@ The agent is built incrementally across sprints. Planned and implemented feature
 - Predefined test prompts for repeatable manual testing
 
 ### Tool Calling
-- Tool definition and registration via JSON schema
+- Tool definition and registration
 - Mock data tools (hardcoded responses, no real backend needed)
-- Agent loop: receive input → call LLM → tool call or final answer → execute tool → feed result back → repeat
-- Structured output parsing with JSON repair
+- Agent loop
 
 ### Reasoning — ReAct Pattern
 - **Thought** — the model reasons about what to do next
 - **Action** — the model decides which tool to call
 - **Observation** — the tool result is fed back to the model
 - **Final Answer** — the model responds when done reasoning
-- Structured step schema as JSON, with reasoning chain logging
+- Structured step schema with reasoning chain logging
 
 ### State, Memory & History
 - Short-term conversation history passed on every LLM call
-- Structured message history including tool results (`role: "tool"`)
+- Structured message history including tool results
 - Different techniques of context management
 
 ### Guardrails & Sanitization
@@ -55,7 +54,7 @@ The agent is built incrementally across sprints. Planned and implemented feature
 - Logging for each thought, action, and observation
 - Reasoning chain visualization
 - OpenTelemetry metrics
-- OpenTelemetry tracing with span export to Jaeger/Tempo
+- OpenTelemetry tracing
 
 ### Advanced Planning
 - Goal decomposition into sub-tasks
