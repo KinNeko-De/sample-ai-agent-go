@@ -1,5 +1,8 @@
 package llm
 
+// FakeLLM is a simple implementation of the LLM interface that always returns a fixed response.
+// Outdated with sprint 01, where the LLM is forced to output json
+
 type FakeLLM struct{}
 
 func NewFakeLLM() *FakeLLM {

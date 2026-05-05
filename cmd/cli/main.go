@@ -35,12 +35,7 @@ func main() {
 			break
 		}
 
-		response, err := a.Chat(input)
-		if err != nil {
-			slog.Error("chat error", slog.Any("error", err))
-			fmt.Println("Something went wrong. Please try again.")
-			continue
-		}
+		response := a.Chat(input)
 		fmt.Println(response)
 	}
 }
