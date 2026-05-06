@@ -89,7 +89,15 @@ Input/Output Sanitization belongs here — it is a safety concern, not a memory 
     - If the response fails the judgment it can be blocked, retried, or flagged
     - Trade-off: doubles LLM calls and adds latency on every turn
 
-### 6. Observability
+### 6. Advanced tool handling
+Up first all tools are sent to the LLM in the system prompt. As the number of tools grow, we want a) to optimizes the context window, so that we do not have to pass all tools everytime b) to get better results, and therefore do not confuse the LLM with all the tool calls.
+To solve that, we want a dynamic lookup of tools over a search tool that the LLM can call. This is also know under the term 'skills' used by Anthropic.
+- Define the tool to search other tools and tell the LLM to use it
+- Phase 1: The search tool should lookup tools with a simple "string contains" method
+- Phase 2: The search tool should lookup tools using a semantic search (Vektor-DB/Embeddings)
+- Optimize round trips: If a tool were already searched, send it to the LLM each time. It is likely that the user needs the tool a second time
+
+### 7. Observability
 
 - Step/trace logging (log each thought, action, observation as it happens)
 - Reasoning chain visualization (display the full ReAct trace for debugging)
@@ -105,17 +113,17 @@ Input/Output Sanitization belongs here — it is a safety concern, not a memory 
     - Child spans for each LLM call, tool execution, and JSON parse/repair step
     - Span attributes: model name, token counts, tool name, retry attempt number
     
-### 7. Advanced Planning
+### 8. Advanced Planning
 
 - Decomposition (break complex goals into sub-tasks)
 - Plan & Execute (generate a plan first, then execute steps one by one)
 
-### 8. Subagents
+### 9. Subagents
 
 - Domain-Oriented Specialization (separate agents for Contact, Policy, etc.)
 - Semantic Intent Mapping & Routing ("My father died. Do I get extra holiday? Who approves that?" → mapped to correct specialist agent)
 
-### 9. Evaluation
+### 10. Evaluation
 
 - Test harness with expected outputs (run predefined prompts, assert expected results — verifies changes don't break behavior)
 - LLM-as-Judge — Offline (a second LLM evaluates agent responses as a batch step, not in the live request path)
@@ -123,7 +131,7 @@ Input/Output Sanitization belongs here — it is a safety concern, not a memory 
     - Useful for regression testing after changes — similar to how GitHub Copilot reviews AI-generated PRs
     - No latency cost since it runs outside the live agent loop
 
-### 10. Documentation
+### 11. Documentation
 
 - Architectural Decision Records (ADRs — document why key technical choices were made)
 - arc42 template (structured architecture documentation)
