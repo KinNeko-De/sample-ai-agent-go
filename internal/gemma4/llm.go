@@ -1,6 +1,8 @@
 package gemma4
 
 import (
+	"io"
+
 	"github.com/kinneko-de/sample-ai-agent-go/internal/llm"
 	"github.com/kinneko-de/sample-ai-agent-go/internal/ollama"
 )
@@ -14,9 +16,9 @@ func NewGemma4LLM() *Gemma4LLM {
 	return &Gemma4LLM{}
 }
 
-func (l *Gemma4LLM) Chat(messages []llm.Message) (llm.Message, error) {
+func (l *Gemma4LLM) Chat(messages []llm.Message, writer io.Writer) (llm.Message, error) {
 	client := ollama.NewOllamaClient()
-	response, err := client.Chat(modelName, messages)
+	response, err := client.Chat(modelName, messages, writer)
 	if err != nil {
 		return llm.Message{}, err
 	}

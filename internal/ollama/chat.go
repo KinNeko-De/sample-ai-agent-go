@@ -1,10 +1,13 @@
 package ollama
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/kinneko-de/sample-ai-agent-go/internal/llm"
 )
@@ -22,46 +25,74 @@ func NewOllamaClient() *OllamaClient {
 	return &OllamaClient{}
 }
 
-func (c *OllamaClient) Chat(model string, messages []llm.Message) (llm.Message, error) {
+func (c *OllamaClient) Chat(model string, messages []llm.Message, writer io.Writer) (llm.Message, error) {
 	request := Request{
 		Model:    model,
 		Messages: messages,
 		Think:    true,
-		Stream:   false,
+		Stream:   true,
 	}
-	requestBytes, err := json.Marshal(request)
-	if err != nil {
-		return llm.Message{}, err
-	}
-	req, err := http.NewRequest("POST", ollamaURL, bytes.NewBuffer(requestBytes))
+
+	req, err := createRequet(request)
 	if err != nil {
 		return llm.Message{}, err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return llm.Message{}, err
 	}
+
 	defer resp.Body.Close()
 
-	bodyBytes, err := io.ReadAll(resp.Body)
+	fullContent, role, err := streamResponse(resp, writer)
 	if err != nil {
 		return llm.Message{}, err
 	}
 
-	var respObj Response
-	err2 := json.Unmarshal(bodyBytes, &respObj)
-	if err2 != nil {
-		return llm.Message{}, err2
+	return llm.Message{
+		Role:    role,
+		Content: fullContent.String(),
+	}, nil
+}
+
+func streamResponse(resp *http.Response, writer io.Writer) (strings.Builder, string, error) {
+	var fullContent strings.Builder
+	var role string
+
+	scanner := bufio.NewScanner(resp.Body)
+	for scanner.Scan() {
+		var chunk Response
+		if err := json.Unmarshal(scanner.Bytes(), &chunk); err != nil {
+			continue
+		}
+		role = chunk.Message.Role
+		fmt.Fprint(writer, chunk.Message.Content)
+		fullContent.WriteString(chunk.Message.Content)
+		if chunk.Done {
+			break
+		}
 	}
-	answer := llm.Message{
-		Role:    respObj.Message.Role,
-		Content: respObj.Message.Content,
+	if err := scanner.Err(); err != nil {
+		return strings.Builder{}, "", err
+	}
+	fmt.Fprintln(writer)
+	return fullContent, role, nil
+}
+
+func createRequet(request Request) (*http.Request, error) {
+	requestBytes, err := json.Marshal(request)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", ollamaURL, bytes.NewBuffer(requestBytes))
+	if err != nil {
+		return nil, err
 	}
 
-	return answer, nil
+	req.Header.Set("Content-Type", "application/json")
+	return req, nil
 }
 
 type Request struct {
@@ -81,4 +112,5 @@ type Response struct {
 	Model     string  `json:"model"`
 	CreatedAt string  `json:"created_at"`
 	Message   Message `json:"message"`
+	Done      bool    `json:"done"`
 }

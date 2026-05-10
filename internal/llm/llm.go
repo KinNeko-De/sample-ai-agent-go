@@ -1,5 +1,7 @@
 package llm
 
+import "io"
+
 const RoleSystem = "system"
 const RoleUser = "user"
 
@@ -9,5 +11,5 @@ type Message struct {
 }
 
 type LLM interface {
-	Chat(messages []Message) (Message, error)
+	Chat(messages []Message, writer io.Writer) (Message, error)
 }
