@@ -118,12 +118,19 @@ To solve that, we want a dynamic lookup of tools over a search tool that the LLM
 - Decomposition (break complex goals into sub-tasks)
 - Plan & Execute (generate a plan first, then execute steps one by one)
 
-### 9. Subagents
+### 9. Voice
+
+- Voice output
+    - browser output
+    - natural language
+- Voice input
+
+### 10. Subagents
 
 - Domain-Oriented Specialization (separate agents for Contact, Policy, etc.)
 - Semantic Intent Mapping & Routing ("My father died. Do I get extra holiday? Who approves that?" → mapped to correct specialist agent)
 
-### 10. Evaluation
+### 11. Evaluation
 
 - Test harness with expected outputs (run predefined prompts, assert expected results — verifies changes don't break behavior)
 - LLM-as-Judge — Offline (a second LLM evaluates agent responses as a batch step, not in the live request path)
@@ -131,12 +138,12 @@ To solve that, we want a dynamic lookup of tools over a search tool that the LLM
     - Useful for regression testing after changes — similar to how GitHub Copilot reviews AI-generated PRs
     - No latency cost since it runs outside the live agent loop
 
-### 11. Documentation
+### 12. Documentation
 
 - Architectural Decision Records (ADRs — document why key technical choices were made)
 - arc42 template (structured architecture documentation)
 
-### 11. End-User Interface
+### 13. End-User Interface
 
 The CLI/REPL is a developer tool. A real end-user interface will be added at a late stage once the agent behavior is stable.
 
