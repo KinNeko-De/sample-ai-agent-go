@@ -14,7 +14,7 @@ const quitCommand = "quit"
 const welcomeMessage = "Welcome to the company assistant! How can I help you today?"
 
 func main() {
-	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug})))
+	slog.SetDefault(slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo})))
 
 	a := agent.New()
 
@@ -35,12 +35,11 @@ func main() {
 			break
 		}
 
-		response, err := a.Chat(input)
+		err := a.Chat(input, os.Stdout)
 		if err != nil {
 			slog.Error("chat error", slog.Any("error", err))
 			fmt.Println("Something went wrong. Please try again.")
 			continue
 		}
-		fmt.Println(response)
 	}
 }

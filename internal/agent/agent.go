@@ -1,6 +1,8 @@
 package agent
 
 import (
+	"io"
+
 	"github.com/kinneko-de/sample-ai-agent-go/internal/gemma4"
 	"github.com/kinneko-de/sample-ai-agent-go/internal/llm"
 	"github.com/kinneko-de/sample-ai-agent-go/internal/memory"
@@ -20,7 +22,7 @@ func New() *Agent {
 	}
 }
 
-func (agent *Agent) Chat(input string) (string, error) {
+func (agent *Agent) Chat(input string, writer io.Writer) error {
 	userMessage := llm.Message{
 		Role:    llm.RoleUser,
 		Content: input,
@@ -30,12 +32,12 @@ func (agent *Agent) Chat(input string) (string, error) {
 	builder := &gemma4.Gemma4SystemPrompt{}
 	systemMessage := builder.Generate(systemPrompt)
 
-	response, err := agent.client.Chat(agent.memory.Messages(systemMessage))
+	response, err := agent.client.Chat(agent.memory.Messages(systemMessage), writer)
 	if err != nil {
-		return "", err
+		return err
 	}
 
 	agent.memory.Add(response)
 	agent.memory.Log()
-	return response.Content, nil
+	return nil
 }
