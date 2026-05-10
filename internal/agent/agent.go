@@ -1,9 +1,12 @@
 package agent
 
 import (
+	"github.com/kinneko-de/sample-ai-agent-go/internal/gemma4"
 	"github.com/kinneko-de/sample-ai-agent-go/internal/llm"
 	"github.com/kinneko-de/sample-ai-agent-go/internal/memory"
 )
+
+const systemPrompt = "You are a helpful company assistant. Answer employee questions about the company."
 
 type Agent struct {
 	memory *memory.ShortTerm
@@ -13,19 +16,26 @@ type Agent struct {
 func New() *Agent {
 	return &Agent{
 		memory: memory.NewShortTerm(),
-		client: llm.NewFakeLLM(),
+		client: gemma4.NewGemma4LLM(),
 	}
 }
 
 func (agent *Agent) Chat(input string) (string, error) {
-	agent.memory.AddUserInput(input)
+	userMessage := llm.Message{
+		Role:    llm.RoleUser,
+		Content: input,
+	}
+	agent.memory.Add(userMessage)
 
-	response, err := agent.client.Chat(agent.memory.Messages())
+	builder := &gemma4.Gemma4SystemPrompt{}
+	systemMessage := builder.Generate(systemPrompt)
+
+	response, err := agent.client.Chat(agent.memory.Messages(systemMessage))
 	if err != nil {
 		return "", err
 	}
 
-	agent.memory.AddAssistantResponse(response)
+	agent.memory.Add(response)
 	agent.memory.Log()
-	return response, nil
+	return response.Content, nil
 }

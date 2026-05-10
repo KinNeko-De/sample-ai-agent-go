@@ -7,10 +7,6 @@ import (
 	"github.com/kinneko-de/sample-ai-agent-go/internal/llm"
 )
 
-const roleSystem = "system"
-const roleUser = "user"
-const roleAssistant = "assistant"
-
 type ShortTerm struct {
 	messages []llm.Message
 }
@@ -19,23 +15,17 @@ func NewShortTerm() *ShortTerm {
 	return &ShortTerm{}
 }
 
-func (m *ShortTerm) AddUserInput(content string) {
-	m.add(roleUser, content)
+func (m *ShortTerm) Add(message llm.Message) {
+	m.addMessage(message)
 }
 
-func (m *ShortTerm) AddAssistantResponse(content string) {
-	m.add(roleAssistant, content)
+func (m *ShortTerm) addMessage(message llm.Message) {
+	m.messages = append(m.messages, message)
 }
 
-func (m *ShortTerm) add(role, content string) {
-	m.messages = append(m.messages, llm.Message{Role: role, Content: content})
-}
-
-// Messages returns the system prompt followed by all conversation turns,
-// ready to be sent to the LLM.
-func (m *ShortTerm) Messages() []llm.Message {
+func (m *ShortTerm) Messages(systemPrompt llm.Message) []llm.Message {
 	messages := make([]llm.Message, 0, 1+len(m.messages))
-	messages = append(messages, llm.Message{Role: roleSystem, Content: systemPrompt})
+	messages = append(messages, systemPrompt)
 	messages = append(messages, m.messages...)
 	return messages
 }
